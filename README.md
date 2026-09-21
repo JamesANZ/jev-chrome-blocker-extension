@@ -93,3 +93,7 @@ Pinned model: `jev-1.13.0`.
 ## Honest limits
 
 JEV will mis-fire on sarcasm, mixed political-news, and native ads that look like articles. The reveal chip and a high default threshold are the safety valve. Whole-page “is this site political?” is a different product; this one hides **blocks**.
+
+## License
+
+[MIT](LICENSE) © 2026 James Sangalli
