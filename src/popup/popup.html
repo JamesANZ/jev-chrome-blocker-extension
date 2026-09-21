@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jev Content Blocker</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        width: 300px;
+        margin: 0;
+        padding: 16px;
+        color: #1b2418;
+      }
+      h1 {
+        font-size: 16px;
+        margin: 0 0 4px;
+      }
+      p {
+        margin: 0 0 10px;
+        color: #4a5546;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+      .status {
+        display: inline-block;
+        background: #e8f5e9;
+        color: #1b5e20;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        margin-bottom: 12px;
+      }
+      .status.warn {
+        background: #fff4e5;
+        color: #8a5400;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+        font-size: 13px;
+      }
+      button,
+      a.button {
+        display: inline-block;
+        background: #2f6b2a;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font: inherit;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      button.secondary {
+        background: #ecefe9;
+        color: #1b2418;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin: 12px 0;
+      }
+      a {
+        color: #2f6b2a;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Jev Content Blocker</h1>
+    <div id="status" class="status">Checking…</div>
+    <div class="row">
+      <label for="enabled">Enabled</label>
+      <input id="enabled" type="checkbox" />
+    </div>
+    <div class="row">
+      <label for="paused">Pause scanning</label>
+      <input id="paused" type="checkbox" />
+    </div>
+    <p>Scanned blocks: <strong id="scanned">0</strong></p>
+    <p>Hidden on this page: <strong id="hidden">0</strong></p>
+    <div class="actions">
+      <button id="rescan" type="button">Rescan page</button>
+      <button id="open-options" class="secondary" type="button">Options</button>
+    </div>
+    <p id="hint"></p>
+    <script type="module" src="./popup.ts"></script>
+  </body>
+</html>

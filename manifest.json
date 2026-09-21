@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Jev Content Blocker",
+  "version": "0.1.0",
+  "description": "Hide page blocks that match your rules, judged by TypeSafe JEV.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://api.typesafe.ai/*", "<all_urls>"],
+  "background": {
+    "service_worker": "src/background/service-worker.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content/content.ts"],
+      "css": ["src/content/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "src/options/options.html",
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "Jev Content Blocker"
+  }
+}

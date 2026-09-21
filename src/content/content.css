@@ -1,0 +1,40 @@
+.jev-chip {
+  font:
+    12px/1.4 system-ui,
+    -apple-system,
+    sans-serif;
+  color: #33402f;
+  background: #eef5e8;
+  border: 1px solid #c5d6b8;
+  border-radius: 6px;
+  padding: 6px 8px;
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.jev-chip[data-jev-revealed="1"] {
+  background: #f4f1e6;
+  border-color: #d8d0b4;
+  color: #4a4534;
+}
+
+.jev-chip button {
+  font: inherit;
+  color: #1f3d16;
+  background: #fff;
+  border: 1px solid #b7c8ab;
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.jev-chip button:hover {
+  background: #f7fbf4;
+}
+
+[data-jev-hidden="1"] {
+  display: none !important;
+}
