@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jev blocker demo — cooking, ads, politics</title>
+    <style>
+      body {
+        font-family: Georgia, serif;
+        max-width: 760px;
+        margin: 32px auto;
+        padding: 0 20px 64px;
+        color: #222;
+        line-height: 1.55;
+      }
+      nav,
+      header,
+      footer {
+        font-family: system-ui, sans-serif;
+        color: #555;
+        font-size: 14px;
+      }
+      nav {
+        display: flex;
+        gap: 16px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 12px;
+        margin-bottom: 16px;
+      }
+      .ad-card,
+      .sponsor-card {
+        background: #fff6e5;
+        border: 1px solid #e6c56c;
+        padding: 16px;
+        margin: 24px 0;
+      }
+      .political-card {
+        background: #eef2ff;
+        border: 1px solid #9aa7e0;
+        padding: 16px;
+        margin: 24px 0;
+      }
+      .negative-card {
+        background: #fdecea;
+        border: 1px solid #e3a29a;
+        padding: 16px;
+        margin: 24px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      Home About Contact Pricing Blog Careers and more navigation chrome that should stay visible.
+    </nav>
+    <header>Kitchen Weekly — a demo magazine strapline that is chrome, not a content block.</header>
+
+    <main>
+      <article>
+        <h1>A long editorial article about cooking beans at home</h1>
+        <p>
+          Dried beans need a soak, a simmer, and a pinch of salt at the end.
+          This piece walks through soaking times, why hard water matters, and
+          how a bay leaf changes the pot. None of this is an advertisement.
+          Readers who cook weekly can use the same pot for chickpeas, lentils,
+          and black beans without buying a gadget. The method is slow on
+          purpose so the skins stay intact and the broth tastes like food
+          instead of a can. Leftovers keep for three days and freeze well.
+        </p>
+      </article>
+
+      <aside class="ad-card" id="ad-sidebar">
+        Sponsored: Book this vacation package today and save on flights.
+        Limited offer for new customers. Click through to our partner store
+        and use code BEANS20 at checkout. This is a paid placement.
+        <img alt="Paid vacation promotion banner" />
+      </aside>
+
+      <section class="political-card" role="article">
+        Campaign update: our party will win the election if every voter
+        donates today and shares this partisan message with neighbors.
+        Oppose the other candidate at the rally this weekend. This block is
+        electoral persuasion and campaign fundraising, not a cooking tip.
+      </section>
+
+      <section class="negative-card" role="article">
+        This restaurant is a disaster and the chef should be ashamed.
+        Hostile, fear-inducing, and overwhelmingly negative from start to
+        finish. The food will ruin your night and the staff is terrible.
+        Stay away or you will regret it. Nothing constructive here at all.
+      </section>
+    </main>
+
+    <footer>Copyright 2026 Kitchen Weekly. All rights reserved for the publisher.</footer>
+  </body>
+</html>

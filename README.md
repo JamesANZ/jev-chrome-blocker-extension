@@ -45,6 +45,24 @@ You can add custom rules as plain language (“Hide celebrity gossip”). Enable
 
 The popup can pause scanning or disable the extension without deleting the key.
 
+## Live check (22 Sep 2026)
+
+Verified in the installed Chrome extension against a local fixture and The Guardian. JEV hid matching blocks and left a reveal chip.
+
+Local demo (`demo/index.html`): the cooking article stayed; the sponsored, campaign, and hostile blocks collapsed at **0.99 / 0.99 / 0.98**.
+
+![Demo page with ads, political, and negative blocks hidden](docs/screenshots/demo-hidden.png)
+
+![Same demo after clicking Show on each chip](docs/screenshots/demo-revealed.png)
+
+The Guardian US: a story was hidden as **negative 0.90**, then restored with **Show**.
+
+![Guardian story collapsed behind a Hidden by Jev chip](docs/screenshots/guardian-hidden.png)
+
+![Guardian story revealed from the chip](docs/screenshots/guardian-revealed.png)
+
+Serve the fixture with `python3 -m http.server 4177 --directory demo` and open `http://127.0.0.1:4177/`.
+
 ## Cost and limits
 
 Pricing is cheap per token (on the order of **$0.042 / MTok**) but a busy feed is still many requests. Budget controls in v1:
