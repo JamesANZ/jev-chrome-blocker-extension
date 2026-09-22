@@ -59,7 +59,83 @@ describe("block extraction", () => {
     const marked = document.querySelectorAll("[data-jev-id]").length;
     expect(marked).toBe(first.length);
 
+    document.querySelectorAll("[data-jev-id]").forEach((el) => {
+      el.setAttribute("data-jev-hidden", "1");
+    });
     const second = extractBlocks(document, { skipExisting: true });
     expect(second).toEqual([]);
+  });
+
+  test("finds native AD-badge banners and iframe slots inside a huge section", () => {
+    document.documentElement.innerHTML = `
+      <section class="home-layout">
+        <h1>Play online chess and solve puzzles with friends every day of the week</h1>
+        <p>
+          Start a game, play bots, play coach, play a friend, review a game,
+          and prevent castling while you check the chess lifeline. This wrapper
+          is long enough that the old extractor would keep only this section.
+        </p>
+        <div class="board-layout-ad">
+          <span>AD</span>
+          <p>Switch Funds To Medibank. Switching health funds is easy. Learn More</p>
+        </div>
+        <div class="video-rail">
+          <span>AD</span>
+          <p>KORUU</p>
+          <iframe title="KORUU ad" src="https://googleads.g.doubleclick.net/pagead/ads?x=1"></iframe>
+        </div>
+      </section>
+    `;
+
+    const blocks = extractBlocks(document);
+    const text = blocks.map((block) => block.text).join("\n");
+    expect(text).toMatch(/Medibank/i);
+    expect(text).toMatch(/KORUU/i);
+    expect(text).toMatch(/labeled AD/i);
+    expect(blocks.length).toBeGreaterThanOrEqual(2);
+    expect(blocks.every((block) => block.tagName !== "section")).toBe(true);
+  });
+
+  test("picks up a sibling video slot whose AD badge is inside the iframe", () => {
+    document.documentElement.innerHTML = `
+      <div class="home-bottom">
+        <div class="board-layout-ad">
+          <span>AD</span>
+          <p>Switch Funds To Medibank. Switching health funds is easy. Learn More</p>
+        </div>
+        <div class="video-cell">
+          <iframe title="KORUU" src="https://player.example.com/vast/clip"></iframe>
+          <button>Learn More</button>
+        </div>
+      </div>
+    `;
+
+    const blocks = extractBlocks(document);
+    const text = blocks.map((block) => block.text).join("\n");
+    expect(text).toMatch(/Medibank/i);
+    expect(text).toMatch(/video or iframe advertisement/i);
+    expect(blocks.length).toBeGreaterThanOrEqual(2);
+  });
+
+  test("treats the unit above a Remove Ads control as an ad slot", () => {
+    document.documentElement.innerHTML = `
+      <div class="right-rail">
+        <div class="daily-puzzle">Daily puzzle about a knight fork that is not an advertisement.</div>
+        <div class="amazon-slot">
+          <img alt="Amazon CFDs" />
+          <iframe title="capital.com" src="https://player.example.com/cfd"></iframe>
+        </div>
+        <button type="button">Remove Ads</button>
+      </div>
+    `;
+
+    const blocks = extractBlocks(document);
+    const text = blocks.map((block) => block.text).join("\n");
+    expect(text).toMatch(
+      /Amazon CFDs|capital\.com|video or iframe advertisement/i,
+    );
+    expect(blocks.some((block) => /daily puzzle/i.test(block.text))).toBe(
+      false,
+    );
   });
 });

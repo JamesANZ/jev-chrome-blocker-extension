@@ -53,7 +53,9 @@ async function pageReport(page) {
       chips: chips.length,
       hidden: document.querySelectorAll("[data-jev-hidden='1']").length,
       marked: document.querySelectorAll("[data-jev-id]").length,
-      labels: chips.map((el) => (el.textContent || "").replace(/\s+/g, " ").trim()),
+      labels: chips.map((el) =>
+        (el.textContent || "").replace(/\s+/g, " ").trim(),
+      ),
     };
   });
 }
@@ -114,13 +116,18 @@ try {
   await page.setViewport({ width: 1280, height: 860 });
 
   for (const item of PAGES) {
-    await page.goto(item.url, { waitUntil: "domcontentloaded", timeout: 45000 });
-    await page.waitForFunction(
-      () =>
-        document.querySelectorAll(".jev-chip").length > 0 ||
-        document.querySelectorAll("[data-jev-id]").length > 0,
-      { timeout: item.waitMs },
-    ).catch(() => {});
+    await page.goto(item.url, {
+      waitUntil: "domcontentloaded",
+      timeout: 45000,
+    });
+    await page
+      .waitForFunction(
+        () =>
+          document.querySelectorAll(".jev-chip").length > 0 ||
+          document.querySelectorAll("[data-jev-id]").length > 0,
+        { timeout: item.waitMs },
+      )
+      .catch(() => {});
     await new Promise((r) => setTimeout(r, 2500));
 
     const report = await pageReport(page);
@@ -130,7 +137,10 @@ try {
     console.log(JSON.stringify({ file: item.name, ...chipSummary(report) }));
   }
 
-  await writeFile(path.join(OUT, "summary.json"), JSON.stringify(summary, null, 2));
+  await writeFile(
+    path.join(OUT, "summary.json"),
+    JSON.stringify(summary, null, 2),
+  );
 } finally {
   await browser.close();
 }

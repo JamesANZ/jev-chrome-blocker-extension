@@ -4,12 +4,15 @@ import type {
   JudgeBlocksResponse,
   RescanMessage,
 } from "../lib/messages";
+import { waitForDomContentLoaded } from "../lib/ready";
 import type { BlockJudgment } from "../lib/types";
 
 const judgedIds = new Set<string>();
 let observer: MutationObserver | null = null;
 let debounceTimer: number | undefined;
 let scanning = false;
+let scanQueued = false;
+let queuedForce = false;
 
 function chipLabel(judgment: BlockJudgment): string {
   const name = judgment.matchedRuleLabel ?? judgment.matchedRuleId ?? "rule";
@@ -68,13 +71,23 @@ function renderChip(
 function applyJudgments(judgments: BlockJudgment[]): number {
   let hidden = 0;
   for (const judgment of judgments) {
-    judgedIds.add(judgment.blockId);
     const el = findBlockElement(document, judgment.blockId);
-    if (!el) continue;
     if (judgment.hide) {
-      hideBlock(el, judgment);
-      hidden += 1;
+      judgedIds.add(judgment.blockId);
+      if (el) {
+        hideBlock(el, judgment);
+        hidden += 1;
+      }
+      continue;
     }
+    // Leave unhidden ad-like slots eligible for a later pass once creatives load.
+    if (
+      el?.querySelector("iframe, video") ||
+      el?.getAttribute("data-jev-hidden") === "1"
+    ) {
+      continue;
+    }
+    judgedIds.add(judgment.blockId);
   }
   return hidden;
 }
@@ -97,14 +110,23 @@ async function canScan(): Promise<boolean> {
 }
 
 async function scan(force = false): Promise<void> {
-  if (scanning) return;
+  if (scanning) {
+    scanQueued = true;
+    queuedForce = queuedForce || force;
+    return;
+  }
   if (!(await canScan())) return;
 
   scanning = true;
   try {
     const blocks = extractBlocks(document, {
       skipExisting: !force,
-    }).filter((block) => force || !judgedIds.has(block.id));
+    }).filter((block) => {
+      if (force) return true;
+      if (judgedIds.has(block.id)) return false;
+      const el = findBlockElement(document, block.id);
+      return el?.getAttribute("data-jev-hidden") !== "1";
+    });
     if (blocks.length === 0) return;
 
     const response = (await chrome.runtime.sendMessage({
@@ -126,14 +148,37 @@ async function scan(force = false): Promise<void> {
     // Fail-soft: leave the page as-is.
   } finally {
     scanning = false;
+    if (scanQueued) {
+      const forceAgain = queuedForce;
+      scanQueued = false;
+      queuedForce = false;
+      void scan(forceAgain);
+    }
   }
 }
 
-function scheduleScan(): void {
+function scheduleScan(force = false): void {
   if (debounceTimer) window.clearTimeout(debounceTimer);
   debounceTimer = window.setTimeout(() => {
-    void scan(false);
-  }, 500);
+    void scan(force);
+  }, 800);
+}
+
+function waitForWindowLoad(): Promise<void> {
+  if (document.readyState === "complete") return Promise.resolve();
+  return new Promise((resolve) => {
+    window.addEventListener("load", () => resolve(), { once: true });
+  });
+}
+
+async function startScanning(): Promise<void> {
+  await waitForDomContentLoaded(document);
+  startObserver();
+  await waitForWindowLoad();
+  // Chess.com and similar SPAs inject AD slots after load.
+  await new Promise((resolve) => window.setTimeout(resolve, 400));
+  await scan(false);
+  scheduleScan(false);
 }
 
 function startObserver(): void {
@@ -172,5 +217,4 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }
 });
 
-void scan(true);
-startObserver();
+void startScanning();
